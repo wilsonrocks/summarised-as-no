@@ -1,6 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 from pprint import pprint
+from urllib.parse import urljoin
+
+start_words = [
+    'has',
+    'have',
+    'will',
+    'are',
+    'were',
+    'is',
+    'did',
+]
 
 output = []
 
@@ -16,13 +27,15 @@ with open('./sites') as sites:
                 match.replaceWithChildren()
 
         all_links = parsed.find_all('a')
-
-        question_links = (
-            [link for link in all_links if link.text.endswith('?')])
+        question_links = [
+            link for link in all_links if (
+                link.text.endswith('?')
+            )
+        ]
 
         for link in question_links:
             output.append({
-                'url': link['href'],
+                'url': urljoin(site.strip(), link['href']),
                 'title': link.string,
             })
 
