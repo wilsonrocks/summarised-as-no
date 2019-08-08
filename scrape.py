@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from pprint import pprint
 from urllib.parse import urljoin
+from mailer import send_mail
 
 start_words = [
     'has',
@@ -29,7 +30,7 @@ def collapse_links(soup):
             match.replaceWithChildren()
 
 
-output = []
+output = 'Howdy,\n'
 
 with open('./sites') as sites:
     for site in sites:
@@ -38,16 +39,13 @@ with open('./sites') as sites:
         html = requests.get(site).content
         parsed = BeautifulSoup(html, features='lxml')
         collapse_links(parsed)
-        print(parsed)
-
         all_links = parsed.find_all('a')
+
         question_links = [link for link in all_links if is_question(link.text)]
 
         for link in question_links:
-            output.append({
-                'url': urljoin(site.strip(), link['href']),
-                'title': link.string,
-            })
+            url = urljoin(site.strip(), link['href']),
+            output += f'{link.string}\n {url}\n\n'
 
-
-pprint(output)
+print('logging in and sending email')
+send_mail(output)
