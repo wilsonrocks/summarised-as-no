@@ -20,7 +20,13 @@ start_words = [
 
 def is_question(text):
     first_word = text.split(' ')[0].lower()
-    return first_word in start_words
+    return first_word in start_words and '?' in text
+
+
+def collapse_links(soup):
+    for match in soup.find_all():
+        if match.name != 'a':
+            match.replaceWithChildren()
 
 
 output = []
@@ -31,17 +37,11 @@ with open('./sites') as sites:
 
         html = requests.get(site).content
         parsed = BeautifulSoup(html, features='lxml')
-
-        for match in parsed.find_all():
-            if match.name != 'a':
-                match.replaceWithChildren()
+        collapse_links(parsed)
+        print(parsed)
 
         all_links = parsed.find_all('a')
-        question_links = [
-            link for link in all_links if (
-                is_question(link.text) and '?' in link.text
-            )
-        ]
+        question_links = [link for link in all_links if is_question(link.text)]
 
         for link in question_links:
             output.append({
