@@ -6,6 +6,7 @@ from mailer import send_mail
 from db import check_and_add_site
 
 start_words = [
+    'does',
     'has',
     'have',
     'will',
