@@ -11,6 +11,7 @@ start_words = [
     'have',
     'will',
     'are',
+    'was',
     'were',
     'is',
     'did',
