@@ -38,7 +38,7 @@ sendAnything = False
 
 with open('./sites') as sites:
     for site in sites:
-        if site == '':
+        if site != '':
             print(f'scraping {site}')
             try:
                 html = requests.get(site).content
