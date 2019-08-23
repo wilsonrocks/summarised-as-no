@@ -42,24 +42,24 @@ with open('./sites') as sites:
     for site in [site.strip() for site in sites]:
         if site != '':
             print(f'scraping {site}')
-            # try:
-            html = requests.get(site).content
-            parsed = BeautifulSoup(html, features='lxml')
-            collapse_links(parsed)
-            all_links = parsed.find_all('a')
+            try:
+                html = requests.get(site).content
+                parsed = BeautifulSoup(html, features='lxml')
+                collapse_links(parsed)
+                all_links = parsed.find_all('a')
 
-            question_links = [
-                link for link in all_links if is_question(link.text)]
+                question_links = [
+                    link for link in all_links if is_question(link.text)]
 
-            for link in question_links:
-                url = urljoin(site.strip(), link['href'])
-                if check_and_add_site(url):
-                    print(f'found: {link.string}')
-                    print(url)
-                    sendAnything = True
-                    output += f'{link.string}\n {url}\n\n'
-            # except:
-            # errors.append(site)
+                for link in question_links:
+                    url = urljoin(site.strip(), link['href'])
+                    if check_and_add_site(url):
+                        print(f'found: {link.string}')
+                        print(url)
+                        sendAnything = True
+                        output += f'{link.string}\n {url}\n\n'
+            except:
+                print(f'error scraping{site}')
 
 print('logging in and sending email')
 
