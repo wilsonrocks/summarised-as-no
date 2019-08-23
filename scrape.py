@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from pprint import pprint
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from mailer import send_mail
 from db import check_and_add_site
 
@@ -52,14 +52,20 @@ with open('./sites') as sites:
                     link for link in all_links if is_question(link.text)]
 
                 for link in question_links:
-                    url = urljoin(site.strip(), link['href'])
+                    url_object = urlparse(urljoin(site.strip(), link['href']))
+                    url = f'https://{url_object.netloc}{url_object.path}'
                     if check_and_add_site(url):
                         print(f'found: {link.string}')
                         print(url)
                         sendAnything = True
                         output += f'{link.string}\n {url}\n\n'
-            except:
+            except KeyboardInterrupt:
+                exit(0)
+
+            except Exception as e:
                 print(f'error scraping{site}')
+                print(e)
+
 
 print('logging in and sending email')
 
